@@ -1,2 +1,17 @@
-# main
-This will be the main repo for all contents and material regarding the Software Engineering course Spring 2019
+# Software Engineering and Web Development with the MERN Stack:zap:
+
+![MERN Logo](https://techsparx.com/nodejs/mern/img/mern-stack-logo.jpg)
+
+In this repository I cover the principles of software engineering (SE) as well as the concepts of web development using the MERN stack ([MongoDB](https://www.mongodb.com/), [ExpressJS](https://expressjs.com/), [ReactJS](https://reactjs.org/), [NodeJS](https://nodejs.org/en/)].
+
+> This repository is for complete beginners just starting with the web, or junior developers who want a way inside the JS ecosystem.
+
+### Topics covered: 
+* Fundamentals of JS.
+* Version control using git.
+* Backend using Node and Express.
+* Database using MongoDB.
+* Deployment with [Heroku](https://www.heroku.com/).
+* UI with HTML/CSS/Bootsrap.
+* Frontend using React.
+* State Management using Redux.
