@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+
+    <style>
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td, th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+    </style>
+</head>
+<body>
+    <p id="demo"></p>
+    <h2>Contact List</h2>
+    <input id="myInput" type="text" placeholder="Search..">
+    <button onclick="searchTableName()">Search by first name</button>
+    <br><br>
+    <table>
+        <thead>
+            <tr>
+                <th>Firstname</th>
+                <th>Lastname</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody id="myTable">
+            <tr class="Rn">
+                <td class="Nn">Gehad</td>
+                <td>Ismail</td>
+                <td>gehad.ismail@guc.edu.eg</td>
+            </tr>
+            <tr class="Rn">
+                <td class="Nn">Ammar</td>
+                <td>Yasser</td>
+                <td>ammar.abbas@guc.edu.eg</td>
+            </tr>
+            <tr class="Rn">
+                <td class="Nn">Omar</td>
+                <td>Sherif</td>
+                <td>omar.sherif.fathy.selim@gmail.com</td>
+            </tr>
+            <tr class="Rn">
+                <td class="Nn">Aysha</td>
+                <td>Alsafty</td>
+                <td>aysha.alsafty@guc.edu.eg</td>
+            </tr>
+        </tbody>
+    </table>
+
+
+    <script>
+        
+        function searchTableName() {
+                var input, filter, Result, Tbody, SearchRow;
+                val = -1;
+                input = document.getElementById("myInput");
+                filter = input.value.toUpperCase();
+                Tbody = document.getElementById("myTable");
+                SearchRow = Tbody.getElementsByClassName("Nn");
+                if (filter != "") {
+                    var i;
+                    for (i = 0; i < SearchRow.length; i++) {
+                        if (SearchRow[i].innerHTML.toUpperCase() == filter) {
+                            Result = true;
+                            break;
+                        }
+                    }
+
+                    if (Result) {
+                        var row = Tbody.getElementsByClassName("Rn");
+                        row[i].style.backgroundColor = "green";
+                        alert("Find an Exact Match!");
+                    }
+                }
+
+            
+        }
+
+        
+    </script>
+
+</body>
+</html>
