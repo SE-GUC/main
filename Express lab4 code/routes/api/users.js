@@ -5,7 +5,16 @@ const uuid = require('uuid');
 const router = express.Router();
 
 // Models
-const users = require('../../models/User');
+const User = require('../../models/User');
+
+// temporary data created as if it was pulled out of the database ...
+const users = [
+	new User('Barney', 30),
+	new User('Lilly', 27),
+	new User('Ted', 29),
+	new User('Marshal', 27),
+	new User('Robin', 28)
+];
 
 // Instead of app use route
 // No need to write the full route
@@ -34,17 +43,17 @@ router.post('/', (req, res) => {
 
 router.post('/joi', (req, res) => {
 	const name = req.body.name
-    const age = req.body.age
+	const age = req.body.age
 
-    const schema = {
-        name: Joi.string().min(3).required(),
-        age: Joi.number().required(),
-    }
+	const schema = {
+		name: Joi.string().min(3).required(),
+		age: Joi.number().required(),
+	}
 
 	const result = Joi.validate(req.body, schema);
 
-	if (result.error)return res.status(400).send({ error: result.error.details[0].message });
-	
+	if (result.error) return res.status(400).send({ error: result.error.details[0].message });
+
 	const newUser = {
 		name,
 		age,
