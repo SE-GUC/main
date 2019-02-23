@@ -25,6 +25,6 @@
   - model_2.js
   - ....
 - config
-  - keys
+  - keys (https://www.npmjs.com/package/config)
 - package.json
 - index.js
