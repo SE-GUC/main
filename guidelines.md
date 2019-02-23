@@ -8,7 +8,7 @@
 - Prettier
 
 # Your Github Repo structure
-- Master Branch
+- Master Branch (at least 3 reviewers required in order to merge !)
 - Dev branch (used as the main development branch)
 - Entity Branches (Branches used for regular stories implementation)
 
