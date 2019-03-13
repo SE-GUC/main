@@ -1,5 +1,5 @@
 # Getting Started
-- Create a new file called `.env` to config your server, here is an example
+1. Create a new file called `.env` to config your server, here is an example
 ```
 PORT = 7000
 MONGO_DNS_SRV = "mongodb+srv://"
@@ -8,7 +8,8 @@ MONGO_CLUSTER = "@cluster0.mongodb.net/"
 MONGO_DB_NAME = "test"
 MONGO_OPTIONS = "?retryWrites=true"
 ```
-
+2. run `npm i` to install the dependencies
+3. Ready ! run server with `npm run start` check the scripts in `package.json` for more options
 
 # Endpoints
 - /users
