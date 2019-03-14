@@ -31,8 +31,8 @@
 //= =---------------------------------------------------= =//
 //= =--- DESCRIPTION
 //= =---------------------------------------------------= =//
-// This file (api/routes/users.js)
-// is handling routes starting with `/users`
+// This file (api/v1/routes/users.js)
+// is handling routes starting with `/api/v1/users`
 //= =---------------------------------------------------= =//
 
 const joi = require('joi')
@@ -63,7 +63,7 @@ router
         birthdate: request.body.birthdate,
         gender: request.body.gender
       }).save()
-      response.redirect('/users')
+      response.redirect('/api/v1/users')
     } catch (err) {
       response.json({ error: `Error, couldn't create a new user with the following data` })
     }

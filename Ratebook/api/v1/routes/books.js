@@ -31,8 +31,8 @@
 //= =---------------------------------------------------= =//
 //= =--- DESCRIPTION
 //= =---------------------------------------------------= =//
-// This file (api/routes/books.js)
-// is handling routes starting with `/books`
+// This file (api/v1/routes/books.js)
+// is handling routes starting with `/api/v1/books`
 //= =---------------------------------------------------= =//
 
 const joi = require('joi')
@@ -68,7 +68,7 @@ router
         release_date: request.body.release_date,
         ratings: request.body.ratings || []
       }).save()
-      response.redirect('/books')
+      response.redirect('/api/v1/books')
     } catch (err) {
       response.json({ error: `Error, couldn't create a new book with the following data` })
     }
@@ -154,7 +154,7 @@ router
         voter: request.body.voter
       }
       await Book.findByIdAndUpdate(request.params.id, { $push: { ratings: rate } }).exec()
-      return response.redirect(303, `/books/${request.params.id}`)
+      return response.redirect(303, `/api/v1/books/${request.params.id}`)
     } catch (err) {
       return response.json({ error: `Error, couldn't vote for a book given the following data` })
     }
@@ -174,7 +174,7 @@ router
         voter: request.body.voter
       }
       await Book.findByIdAndUpdate(request.params.id, { $set: { ratings: rate } }).exec()
-      return response.redirect(303, `/books/${request.params.id}`)
+      return response.redirect(303, `/api/v1/books/${request.params.id}`)
     } catch (err) {
       return response.json({ error: `Error, couldn't update a vote for a book given the following data` })
     }

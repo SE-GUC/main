@@ -31,54 +31,42 @@
 //= =---------------------------------------------------= =//
 //= =--- DESCRIPTION
 //= =---------------------------------------------------= =//
-// This file (api/models/Book.js)
-// only defines a Book schema & Model
-// It also contains the bookRating schema
+// This file (api/v1/middlewares/Logger.js)
+// is defining a logger class and a mongo log schema
+// Any call to Logger.log will insert a new log record
+// to the connected mongo database
+// Keep the schema light to reduce the disk space used
 //= =---------------------------------------------------= =//
 
 const mongoose = require('mongoose')
 
 //= =---------------------------------------------------= =//
-// ---== Define the BookRatingSchema
+// ---== Define MongoDb Log Schema & Model
 //= =---------------------------------------------------= =//
-const bookRatingSchema = mongoose.Schema({
+const logSchema = mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
-  rate: {
-    type: Number,
-    min: 0,
-    max: 5,
-    required: true
-  },
-  voter: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
-  }
+  message: String,
+  timestamp: String
 })
+const Log = mongoose.model('Log', logSchema)
 //= =---------------------------------------------------= =//
 
 //= =---------------------------------------------------= =//
-// ---== Define the BookSchema
+// ---== Logger class
 //= =---------------------------------------------------= =//
-const bookSchema = mongoose.Schema({
-  _id: mongoose.Schema.Types.ObjectId,
-  title: {
-    type: String,
-    required: true
-  },
-  author: {
-    type: String,
-    required: true
-  },
-  release_date: {
-    type: String,
-    required: true
-  },
-  ratings: {
-    type: [bookRatingSchema],
-    required: true
+class Logger {
+  static log (msg) {
+    try {
+      new Log({
+        _id: mongoose.Types.ObjectId(),
+        message: msg,
+        timestamp: Date.now().toString()
+      }).save()
+    } catch (err) {
+      console.log(err)
+    }
   }
-})
+}
 //= =---------------------------------------------------= =//
 
-module.exports = mongoose.model('Book', bookSchema)
+module.exports = Logger

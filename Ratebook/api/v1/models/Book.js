@@ -31,42 +31,54 @@
 //= =---------------------------------------------------= =//
 //= =--- DESCRIPTION
 //= =---------------------------------------------------= =//
-// This file (api/middlewares/Logger.js)
-// is defining a logger class and a mongo log schema
-// Any call to Logger.log will insert a new log record
-// to the connected mongo database
-// Keep the schema light to reduce the disk space used
+// This file (api/v1/models/Book.js)
+// only defines a Book schema & Model
+// It also contains the bookRating schema
 //= =---------------------------------------------------= =//
 
 const mongoose = require('mongoose')
 
 //= =---------------------------------------------------= =//
-// ---== Define MongoDb Log Schema & Model
+// ---== Define the BookRatingSchema
 //= =---------------------------------------------------= =//
-const logSchema = mongoose.Schema({
+const bookRatingSchema = mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
-  message: String,
-  timestamp: String
-})
-const Log = mongoose.model('Log', logSchema)
-//= =---------------------------------------------------= =//
-
-//= =---------------------------------------------------= =//
-// ---== Logger class
-//= =---------------------------------------------------= =//
-class Logger {
-  static log (msg) {
-    try {
-      new Log({
-        _id: mongoose.Types.ObjectId(),
-        message: msg,
-        timestamp: Date.now().toString()
-      }).save()
-    } catch (err) {
-      console.log(err)
-    }
+  rate: {
+    type: Number,
+    min: 0,
+    max: 5,
+    required: true
+  },
+  voter: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
   }
-}
+})
 //= =---------------------------------------------------= =//
 
-module.exports = Logger
+//= =---------------------------------------------------= =//
+// ---== Define the BookSchema
+//= =---------------------------------------------------= =//
+const bookSchema = mongoose.Schema({
+  _id: mongoose.Schema.Types.ObjectId,
+  title: {
+    type: String,
+    required: true
+  },
+  author: {
+    type: String,
+    required: true
+  },
+  release_date: {
+    type: String,
+    required: true
+  },
+  ratings: {
+    type: [bookRatingSchema],
+    required: true
+  }
+})
+//= =---------------------------------------------------= =//
+
+module.exports = mongoose.model('Book', bookSchema)

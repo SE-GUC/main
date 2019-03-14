@@ -31,7 +31,7 @@
 //= =---------------------------------------------------= =//
 //= =--- DESCRIPTION
 //= =---------------------------------------------------= =//
-// This file (api/models/User.js)
+// This file (api/v1/models/User.js)
 // only defines a User schema & Model
 // It also contains the genderEnumeration
 //= =---------------------------------------------------= =//

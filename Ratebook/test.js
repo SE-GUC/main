@@ -41,8 +41,8 @@
 require('dotenv').config()
 const mongoose = require('mongoose')
 
-const UsersTest = require('./api/tests/users')
-const BooksTest = require('./api/tests/books')
+const UsersTest = require('./api/v1/tests/users')
+const BooksTest = require('./api/v1/tests/books')
 
 //= =---------------------------------------------------= =//
 //= =--- CAPTURE ENVIRONMENT VARIABLES

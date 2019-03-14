@@ -31,15 +31,15 @@
 //= =---------------------------------------------------= =//
 //= =--- DESCRIPTION
 //= =---------------------------------------------------= =//
-// This file (api/tests/books.js)
+// This file (api/v1/tests/users.js)
 // tests the (post, get, put and delete) requests
-// starting from `/books`
+// starting from `/api/v1/users`
 //
-// It defines a class BooksTest
+// It defines a class UsersTest
 // Its constructor takes 1 argument, the server port
 //
 // Usage:
-//  new BooksTest(3000).runAll().then(result => ...)
+//  new UsersTest(3000).runAll().then(result => ...)
 //
 // runAll():
 // returns a promise, so in case you need it
@@ -49,36 +49,35 @@
 //
 // postRequest():
 // is responsible for testing all the post requests of all
-// the routes starting from `/books`
+// the routes starting from `/api/v1/users`
 //
 // getRequest():
 // is responsible for testing all the get requests of all
-// the routes starting from `/books`
+// the routes starting from `/api/v1/users`
 //
 // putRequest():
 // is responsible for testing all the put requests of all
-// the routes starting from `/books`
+// the routes starting from `/api/v1/users`
 //
 // deleteRequest():
 // is responsible for testing all the delete requests of all
-// the routes starting from `/books`
+// the routes starting from `/api/v1/users`
 //= =---------------------------------------------------= =//
 
 const nfetch = require('node-fetch')
-const Book = require('../models/Book')
+const User = require('../models/User')
 
 //= =---------------------------------------------------= =//
-//= =--- BooksTest class
+//= =--- UsersTest class
 //= =---------------------------------------------------= =//
-class BooksTest {
+class UsersTest {
   constructor (PORT) {
-    this.base_url = `http://localhost:${PORT}/books`
+    this.base_url = `http://localhost:${PORT}/api/v1/users`
     this.sharedState = {
       id: null,
-      title: null,
-      author: null,
-      release_date: null,
-      ratings: null
+      name: null,
+      birthdate: null,
+      gender: null
     }
     this.runAll = this.runAll.bind(this)
     this.postRequest = this.postRequest.bind(this)
@@ -101,9 +100,9 @@ class BooksTest {
 
   postRequest () {
     const requestBody = {
-      title: 'A Tale of Two Cities',
-      author: 'Charles Dickens',
-      release_date: '1859-01-01'
+      name: 'monsieur automation robot',
+      birthdate: '1999-01-31',
+      gender: 'male'
     }
 
     test(`Testing => POST ${this.base_url}`, async () => {
@@ -119,13 +118,12 @@ class BooksTest {
       expect(Object.keys(jsonResponse)).not.toEqual(['error'])
 
       // go check in the mongo database
-      const book = await Book.findOne(requestBody).exec()
-      expect(book).toMatchObject(requestBody)
-      this.sharedState.id = book._id
-      this.sharedState.title = book.title
-      this.sharedState.author = book.author
-      this.sharedState.release_date = book.release_date
-      this.sharedState.ratings = book.ratings
+      const user = await User.findOne(requestBody).exec()
+      expect(user).toMatchObject(requestBody)
+      this.sharedState.id = user.id
+      this.sharedState.name = user.name
+      this.sharedState.birthdate = user.birthdate
+      this.sharedState.gender = user.gender
     })
   }
 
@@ -140,21 +138,17 @@ class BooksTest {
       expect(Object.keys(jsonResponse)).toEqual(['data'])
       expect(Object.keys(jsonResponse)).not.toEqual(['error'])
 
-      expect(jsonResponse.data.title).toEqual(this.sharedState.title)
-      expect(jsonResponse.data.author).toEqual(this.sharedState.author)
-      expect(jsonResponse.data.release_date).toEqual(this.sharedState.release_date)
-      jsonResponse.data.ratings.forEach((item, index) => {
-        expect(item).toMatchObject(this.sharedState.ratings[index])
-      })
+      expect(jsonResponse.data.name).toEqual(this.sharedState.name)
+      expect(jsonResponse.data.birthdate).toEqual(this.sharedState.birthdate)
+      expect(jsonResponse.data.gender).toEqual(this.sharedState.gender)
     })
   }
 
   putRequest () {
     const requestBody = {
-      title: 'The Art of War',
-      author: 'Sun Tzu',
-      release_date: '500-01-01',
-      ratings: []
+      name: 'madame automation robote',
+      birthdate: '1999-01-31',
+      gender: 'female'
     }
     test(`Testing => PUT ${this.base_url}/:id`, async () => {
       const response = await nfetch(`${this.base_url}/${this.sharedState.id}`, {
@@ -167,18 +161,14 @@ class BooksTest {
       expect(Object.keys(jsonResponse)).toEqual(['data'])
       expect(Object.keys(jsonResponse)).not.toEqual(['error'])
 
-      const book = await Book.findOne(requestBody).exec()
-      expect(jsonResponse.data.title).toEqual(book.title)
-      expect(jsonResponse.data.author).toEqual(book.author)
-      expect(jsonResponse.data.release_date).toEqual(book.release_date)
-      jsonResponse.data.ratings.forEach((item, index) => {
-        expect(item).toMatchObject(book.ratings[index])
-      })
-      this.sharedState.id = book._id
-      this.sharedState.title = book.title
-      this.sharedState.author = book.author
-      this.sharedState.release_date = book.release_date
-      this.sharedState.ratings = book.ratings
+      const user = await User.findOne(requestBody).exec()
+      expect(jsonResponse.data.name).toEqual(user.name)
+      expect(jsonResponse.data.birthdate).toEqual(user.birthdate)
+      expect(jsonResponse.data.gender).toEqual(user.gender)
+      this.sharedState.id = user.id
+      this.sharedState.name = user.name
+      this.sharedState.birthdate = user.birthdate
+      this.sharedState.gender = user.gender
     })
   }
 
@@ -193,11 +183,12 @@ class BooksTest {
       expect(Object.keys(jsonResponse)).toEqual(['data'])
       expect(Object.keys(jsonResponse)).not.toEqual(['error'])
 
-      const checkBook = await Book.findOne({ _id: this.sharedState.id }).exec()
-      expect(checkBook).toEqual(null)
+      // make sure the user hase been removed
+      const checkUser = await User.findOne({ _id: this.sharedState.id }).exec()
+      expect(checkUser).toEqual(null)
     })
   }
 }
 //= =---------------------------------------------------= =//
 
-module.exports = BooksTest
+module.exports = UsersTest

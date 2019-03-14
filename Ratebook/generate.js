@@ -78,7 +78,7 @@ mongoose.connection.dropDatabase()
 async function genAll () {
   const createUser = async (requestBody) => {
     return new Promise(async (resolve, reject) => {
-      const response = await nfetch(`http://localhost:${PORT}/users`, {
+      const response = await nfetch(`http://localhost:${PORT}/api/v1/users`, {
         method: 'POST',
         body: JSON.stringify(requestBody),
         headers: { 'Content-Type': 'application/json' }
@@ -90,7 +90,7 @@ async function genAll () {
 
   const createBook = async (requestBody) => {
     return new Promise(async (resolve, reject) => {
-      const response = await nfetch(`http://localhost:${PORT}/books`, {
+      const response = await nfetch(`http://localhost:${PORT}/api/v1/books`, {
         method: 'POST',
         body: JSON.stringify(requestBody),
         headers: { 'Content-Type': 'application/json' }
