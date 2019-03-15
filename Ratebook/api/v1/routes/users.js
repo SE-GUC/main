@@ -57,23 +57,23 @@ router
       return response.json({ error: status.error.details[0].message })
     }
     try {
-      new User({
+      const user = await new User({
         _id: mongoose.Types.ObjectId(),
         name: request.body.name,
         birthdate: request.body.birthdate,
         gender: request.body.gender
       }).save()
-      response.redirect('/api/v1/users')
+      return response.json({ data: user })
     } catch (err) {
-      response.json({ error: `Error, couldn't create a new user with the following data` })
+      return response.json({ error: `Error, couldn't create a new user with the following data` })
     }
   })
   .get(async (request, response) => {
     try {
       const allUsers = await User.find({}).exec()
-      response.json({ data: allUsers })
+      return response.json({ data: allUsers })
     } catch (err) {
-      response.json({ error: `Error, Couldn't fetch the list of all users from the database` })
+      return response.json({ error: `Error, Couldn't fetch the list of all users from the database` })
     }
   })
 //= =---------------------------------------------------= =//

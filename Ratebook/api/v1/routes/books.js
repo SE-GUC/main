@@ -61,24 +61,24 @@ router
       return response.json({ error: status.error.details[0].message })
     }
     try {
-      new Book({
+      const book = await new Book({
         _id: mongoose.Types.ObjectId(),
         title: request.body.title,
         author: request.body.author,
         release_date: request.body.release_date,
         ratings: request.body.ratings || []
       }).save()
-      response.redirect('/api/v1/books')
+      return response.json({ data: book })
     } catch (err) {
-      response.json({ error: `Error, couldn't create a new book with the following data` })
+      return response.json({ error: `Error, couldn't create a new book with the following data` })
     }
   })
   .get(async (request, response) => {
     try {
       const allBooks = await Book.find({}).exec()
-      response.json({ data: allBooks })
+      return response.json({ data: allBooks })
     } catch (err) {
-      response.json({ error: `Error, Couldn't fetch the list of all books from the database` })
+      return response.json({ error: `Error, Couldn't fetch the list of all books from the database` })
     }
   })
 //= =---------------------------------------------------= =//
@@ -153,8 +153,8 @@ router
         rate: request.body.rate,
         voter: request.body.voter
       }
-      await Book.findByIdAndUpdate(request.params.id, { $push: { ratings: rate } }).exec()
-      return response.redirect(303, `/api/v1/books/${request.params.id}`)
+      const book = await Book.findByIdAndUpdate(request.params.id, { $push: { ratings: rate } }).exec()
+      return response.json({ data: book })
     } catch (err) {
       return response.json({ error: `Error, couldn't vote for a book given the following data` })
     }
@@ -173,8 +173,8 @@ router
         rate: request.body.rate,
         voter: request.body.voter
       }
-      await Book.findByIdAndUpdate(request.params.id, { $set: { ratings: rate } }).exec()
-      return response.redirect(303, `/api/v1/books/${request.params.id}`)
+      const book = await Book.findByIdAndUpdate(request.params.id, { $set: { ratings: rate } }).exec()
+      return response.json({ data: book })
     } catch (err) {
       return response.json({ error: `Error, couldn't update a vote for a book given the following data` })
     }
