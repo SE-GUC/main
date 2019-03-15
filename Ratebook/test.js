@@ -68,10 +68,12 @@ mongoose.connect(`${MONGO_DNS_SRV}${MONGO_AUTH}${MONGO_CLUSTER}${MONGO_DB_NAME}$
 //= =---------------------------------------------------= =//
 // ---== Setup before & after all tests run
 //= =---------------------------------------------------= =//
-beforeAll(() => {})
+beforeAll(async () => {
+  await mongoose.connection.dropDatabase()
+})
 
-afterAll(() => {
-  mongoose.connection.dropDatabase()
+afterAll(async () => {
+  await mongoose.connection.dropDatabase()
 })
 //= =---------------------------------------------------= =//
 
