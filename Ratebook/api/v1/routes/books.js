@@ -51,7 +51,7 @@ router
     const status = joi.validate(request.body, {
       title: joi.string().min(2).required(),
       author: joi.string().min(2).required(),
-      release_date: joi.string().length(10).required(),
+      release_date: joi.date().required(),
       ratings: joi.array().items(joi.object().keys({
         rate: joi.number().min(0).max(5).required(),
         voter: joi.string().length(24).required()

@@ -80,6 +80,24 @@ afterAll(async () => {
 //= =---------------------------------------------------= =//
 // ---== Core tests
 //= =---------------------------------------------------= =//
-new UsersTest(PORT).runAll().then(_ => {})
-new BooksTest(PORT).runAll().then(_ => {})
+const usersTests = new UsersTest(PORT, '/users')
+const booksTests = new BooksTest(PORT, '/books')
+
+describe('Let me first run the independent tests', () => {
+  describe('Making sure independent users routes work', () => {
+    usersTests.runIndependently().then(_ => {})
+  })
+  describe('Making sure independent books routes work', () => {
+    booksTests.runIndependently().then(_ => {})
+  })
+})
+
+describe('Now running the dependent tests', () => {
+  describe('Now running ', () => {
+    usersTests.runDependently().then(_ => {})
+  })
+  describe('Making sure independent books routes work', () => {
+    booksTests.runDependently().then(_ => {})
+  })
+})
 //= =---------------------------------------------------= =//

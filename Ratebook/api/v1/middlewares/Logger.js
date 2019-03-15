@@ -46,7 +46,7 @@ const mongoose = require('mongoose')
 const logSchema = mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
   message: String,
-  timestamp: String
+  timestamp: Date
 })
 const Log = mongoose.model('Log', logSchema)
 //= =---------------------------------------------------= =//

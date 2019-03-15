@@ -50,7 +50,7 @@ router
   .post(async (request, response) => {
     const status = joi.validate(request.body, {
       name: joi.string().min(2).required(),
-      birthdate: joi.string().length(10).required(),
+      birthdate: joi.date().required(),
       gender: joi.string().valid(['male', 'female']).required()
     })
     if (status.error) {

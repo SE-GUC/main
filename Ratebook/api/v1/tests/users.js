@@ -65,47 +65,57 @@
 //= =---------------------------------------------------= =//
 
 const nfetch = require('node-fetch')
+const AbstractTests = require('./AbstractTests')
 const User = require('../models/User')
 
 //= =---------------------------------------------------= =//
 //= =--- UsersTest class
 //= =---------------------------------------------------= =//
-class UsersTest {
-  constructor (PORT) {
-    this.base_url = `http://localhost:${PORT}/api/v1/users`
+class UsersTest extends AbstractTests {
+  constructor (PORT, ROUTE) {
+    super(PORT, ROUTE)
     this.sharedState = {
       id: null,
       name: null,
       birthdate: null,
       gender: null
     }
-    this.runAll = this.runAll.bind(this)
-    this.postRequest = this.postRequest.bind(this)
-    this.getRequest = this.getRequest.bind(this)
-    this.putRequest = this.putRequest.bind(this)
-    this.deleteRequest = this.deleteRequest.bind(this)
   }
 
-  runAll () {
+  runIndependently () {
+    super.runIndependently()
     try {
       return new Promise((resolve, reject) => {
-        this.postRequest()
-        this.getRequest()
-        this.putRequest()
-        this.deleteRequest()
+        this.postRequestIndependently()
+        this.getRequestIndependently()
+        this.putRequestIndependently()
+        this.deleteRequestIndependently()
         resolve()
       })
     } catch (err) {}
   }
 
-  postRequest () {
+  runDependently () {
+    super.runDependently()
+    try {
+      return new Promise((resolve, reject) => {
+        this.postRequestDependently()
+        this.getRequestDependently()
+        this.putRequestDependently()
+        this.deleteRequestDependently()
+        resolve()
+      })
+    } catch (err) {}
+  }
+
+  postRequestIndependently () {
     const requestBody = {
       name: 'monsieur automation robot',
-      birthdate: '1999-01-31',
+      birthdate: new Date(1999, 1, 31),
       gender: 'male'
     }
 
-    test(`Testing => POST ${this.base_url}`, async () => {
+    test(`Randomly creating a new book,\t\t[=> POST\t${this.base_url}\t`, async () => {
       const response = await nfetch(`${this.base_url}`, {
         method: 'POST',
         body: JSON.stringify(requestBody),
@@ -127,8 +137,8 @@ class UsersTest {
     })
   }
 
-  getRequest () {
-    test(`Testing => GET ${this.base_url}/:id`, async () => {
+  getRequestIndependently () {
+    test(`Fetching the data of that random user,\t[=> GET\t\t${this.base_url}/:id\t`, async () => {
       const response = await nfetch(`${this.base_url}/${this.sharedState.id}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
@@ -139,18 +149,18 @@ class UsersTest {
       expect(Object.keys(jsonResponse)).not.toEqual(['error'])
 
       expect(jsonResponse.data.name).toEqual(this.sharedState.name)
-      expect(jsonResponse.data.birthdate).toEqual(this.sharedState.birthdate)
+      expect(new Date(jsonResponse.data.birthdate)).toEqual(this.sharedState.birthdate)
       expect(jsonResponse.data.gender).toEqual(this.sharedState.gender)
     })
   }
 
-  putRequest () {
+  putRequestIndependently () {
     const requestBody = {
       name: 'madame automation robote',
-      birthdate: '1999-01-31',
+      birthdate: new Date(1999, 1, 31),
       gender: 'female'
     }
-    test(`Testing => PUT ${this.base_url}/:id`, async () => {
+    test(`Updating the data of that user,\t\t[=> PUT\t\t${this.base_url}/:id\t`, async () => {
       const response = await nfetch(`${this.base_url}/${this.sharedState.id}`, {
         method: 'PUT',
         body: JSON.stringify(requestBody),
@@ -163,7 +173,7 @@ class UsersTest {
 
       const user = await User.findOne(requestBody).exec()
       expect(jsonResponse.data.name).toEqual(user.name)
-      expect(jsonResponse.data.birthdate).toEqual(user.birthdate)
+      expect(new Date(jsonResponse.data.birthdate)).toEqual(user.birthdate)
       expect(jsonResponse.data.gender).toEqual(user.gender)
       this.sharedState.id = user.id
       this.sharedState.name = user.name
@@ -172,8 +182,8 @@ class UsersTest {
     })
   }
 
-  deleteRequest () {
-    test(`Testing => DELETE ${this.base_url}/:id`, async () => {
+  deleteRequestIndependently () {
+    test(`Deleting that random user,\t\t\t[=> DELETE\t${this.base_url}/:id\t`, async () => {
       const response = await nfetch(`${this.base_url}/${this.sharedState.id}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' }
@@ -187,6 +197,22 @@ class UsersTest {
       const checkUser = await User.findOne({ _id: this.sharedState.id }).exec()
       expect(checkUser).toEqual(null)
     })
+  }
+
+  postRequestDependently () {
+
+  }
+
+  getRequestDependently () {
+
+  }
+
+  putRequestDependently () {
+
+  }
+
+  deleteRequestDependently () {
+
   }
 }
 //= =---------------------------------------------------= =//

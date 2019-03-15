@@ -65,14 +65,15 @@
 //= =---------------------------------------------------= =//
 
 const nfetch = require('node-fetch')
+const AbstractTests = require('./AbstractTests')
 const Book = require('../models/Book')
 
 //= =---------------------------------------------------= =//
 //= =--- BooksTest class
 //= =---------------------------------------------------= =//
-class BooksTest {
-  constructor (PORT) {
-    this.base_url = `http://localhost:${PORT}/api/v1/books`
+class BooksTest extends AbstractTests {
+  constructor (PORT, ROUTE) {
+    super(PORT, ROUTE)
     this.sharedState = {
       id: null,
       title: null,
@@ -80,33 +81,42 @@ class BooksTest {
       release_date: null,
       ratings: null
     }
-    this.runAll = this.runAll.bind(this)
-    this.postRequest = this.postRequest.bind(this)
-    this.getRequest = this.getRequest.bind(this)
-    this.putRequest = this.putRequest.bind(this)
-    this.deleteRequest = this.deleteRequest.bind(this)
   }
 
-  runAll () {
+  runIndependently () {
+    super.runIndependently()
     try {
       return new Promise((resolve, reject) => {
-        this.postRequest()
-        this.getRequest()
-        this.putRequest()
-        this.deleteRequest()
+        this.postRequestIndependently()
+        this.getRequestIndependently()
+        this.putRequestIndependently()
+        this.deleteRequestIndependently()
         resolve()
       })
     } catch (err) {}
   }
 
-  postRequest () {
+  runDependently () {
+    super.runDependently()
+    try {
+      return new Promise((resolve, reject) => {
+        this.postRequestDependently()
+        this.getRequestDependently()
+        this.putRequestDependently()
+        this.deleteRequestDependently()
+        resolve()
+      })
+    } catch (err) {}
+  }
+
+  postRequestIndependently () {
     const requestBody = {
       title: 'A Tale of Two Cities',
       author: 'Charles Dickens',
-      release_date: '1859-01-01'
+      release_date: new Date(1859, 1, 1)
     }
 
-    test(`Testing => POST ${this.base_url}`, async () => {
+    test(`Randomly creating a new book,\t\t[=> POST\t${this.base_url}\t`, async () => {
       const response = await nfetch(`${this.base_url}`, {
         method: 'POST',
         body: JSON.stringify(requestBody),
@@ -129,8 +139,8 @@ class BooksTest {
     })
   }
 
-  getRequest () {
-    test(`Testing => GET ${this.base_url}/:id`, async () => {
+  getRequestIndependently () {
+    test(`Fetching the data of that random book,\t[=> GET\t\t${this.base_url}/:id\t`, async () => {
       const response = await nfetch(`${this.base_url}/${this.sharedState.id}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
@@ -142,21 +152,21 @@ class BooksTest {
 
       expect(jsonResponse.data.title).toEqual(this.sharedState.title)
       expect(jsonResponse.data.author).toEqual(this.sharedState.author)
-      expect(jsonResponse.data.release_date).toEqual(this.sharedState.release_date)
+      expect(new Date(jsonResponse.data.release_date)).toEqual(this.sharedState.release_date)
       jsonResponse.data.ratings.forEach((item, index) => {
         expect(item).toMatchObject(this.sharedState.ratings[index])
       })
     })
   }
 
-  putRequest () {
+  putRequestIndependently () {
     const requestBody = {
       title: 'The Art of War',
       author: 'Sun Tzu',
-      release_date: '500-01-01',
+      release_date: new Date(500, 1, 1),
       ratings: []
     }
-    test(`Testing => PUT ${this.base_url}/:id`, async () => {
+    test(`Updating the data of that random book,\t[=> PUT\t\t${this.base_url}/:id\t`, async () => {
       const response = await nfetch(`${this.base_url}/${this.sharedState.id}`, {
         method: 'PUT',
         body: JSON.stringify(requestBody),
@@ -170,7 +180,7 @@ class BooksTest {
       const book = await Book.findOne(requestBody).exec()
       expect(jsonResponse.data.title).toEqual(book.title)
       expect(jsonResponse.data.author).toEqual(book.author)
-      expect(jsonResponse.data.release_date).toEqual(book.release_date)
+      expect(new Date(jsonResponse.data.release_date)).toEqual(book.release_date)
       jsonResponse.data.ratings.forEach((item, index) => {
         expect(item).toMatchObject(book.ratings[index])
       })
@@ -182,8 +192,8 @@ class BooksTest {
     })
   }
 
-  deleteRequest () {
-    test(`Testing => DELETE ${this.base_url}/:id`, async () => {
+  deleteRequestIndependently () {
+    test(`Deleting that random book,\t\t\t[=> DELETE\t${this.base_url}/:id\t`, async () => {
       const response = await nfetch(`${this.base_url}/${this.sharedState.id}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' }
@@ -196,6 +206,22 @@ class BooksTest {
       const checkBook = await Book.findOne({ _id: this.sharedState.id }).exec()
       expect(checkBook).toEqual(null)
     })
+  }
+
+  postRequestDependently () {
+
+  }
+
+  getRequestDependently () {
+
+  }
+
+  putRequestDependently () {
+
+  }
+
+  deleteRequestDependently () {
+
   }
 }
 //= =---------------------------------------------------= =//
