@@ -39,7 +39,18 @@
 // Its constructor takes 1 argument, the server port
 //
 // Usage:
-//  new BooksTest(3000).runAll().then(result => ...)
+//  ...
+//  new BooksTest(3000).runIndependently().then(result => ...)
+//  ...
+//
+// Once all entites independet tests pass start running
+// new BooksTest(3000).runDependently().then(result => ...)
+//
+// A bit complicated, don't you get attached to the details ..
+//
+// The next functions have 2 kinds suffixes
+// 1- <function_name>Independently
+// 2- <function_name>Dependently
 //
 // runAll():
 // returns a promise, so in case you need it

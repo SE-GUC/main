@@ -35,13 +35,39 @@
 // tests the (post, get, put and delete) requests
 // starting from `/api/v1/users`
 //
-// It defines a class UsersTest
-// Its constructor takes 1 argument, the server port
+// It defines a class UsersTest, inherits from AbstractTests
+// Its constructor takes 2 arguments,
+// the server port and the route on which to test
+//
+// This class has 2 categories of functions
+// 1- Independent
+// 2- Dependent
+//
+// Mainly the tests which do not have any need for external
+// entities it should be tested in the independent section
+//
+// Some tests would depend on external entities
+// that's why we have dependent functions
+//
+// When testing we first run the independent tests on
+// all entities, then if they all pass, we start
+// testing all dependent tests of all the entities
 //
 // Usage:
-//  new UsersTest(3000).runAll().then(result => ...)
+//  ...
+//  new UsersTest(3000).runIndependently().then(result => ...)
+//  ...
 //
-// runAll():
+// Once all entites independet tests pass start running
+// new UsersTest(3000).runDependently().then(result => ...)
+//
+// A bit complicated, don't you get attached to the details ..
+//
+// The next functions have 2 kinds suffixes
+// 1- <function_name>Independently
+// 2- <function_name>Dependently
+//
+// run():
 // returns a promise, so in case you need it
 // to finish, just make sure you wait for it to resolve
 // by using .then(result => ...)
