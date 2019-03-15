@@ -112,10 +112,12 @@ class UsersTest extends AbstractTests {
     super.runIndependently()
     try {
       return new Promise((resolve, reject) => {
-        this.postRequestIndependently()
-        this.getRequestIndependently()
-        this.putRequestIndependently()
-        this.deleteRequestIndependently()
+        describe('Making sure independent users routes work', () => {
+          this.postRequestIndependently()
+          this.getRequestIndependently()
+          this.putRequestIndependently()
+          this.deleteRequestIndependently()
+        })
         resolve()
       })
     } catch (err) {}
@@ -125,10 +127,12 @@ class UsersTest extends AbstractTests {
     super.runDependently()
     try {
       return new Promise((resolve, reject) => {
-        this.postRequestDependently()
-        this.getRequestDependently()
-        this.putRequestDependently()
-        this.deleteRequestDependently()
+        describe('Making sure dependent users routes work', () => {
+          this.postRequestDependently()
+          this.getRequestDependently()
+          this.putRequestDependently()
+          this.deleteRequestDependently()
+        })
         resolve()
       })
     } catch (err) {}
@@ -141,7 +145,7 @@ class UsersTest extends AbstractTests {
       gender: 'male'
     }
 
-    test(`Randomly creating a new book,\t\t[=> POST\t${this.base_url}\t`, async () => {
+    test(`Randomly creating a new user,\t\t[=> POST\t${this.base_url}\t`, async () => {
       const response = await nfetch(`${this.base_url}`, {
         method: 'POST',
         body: JSON.stringify(requestBody),
