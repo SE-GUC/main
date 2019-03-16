@@ -78,25 +78,33 @@ mongoose.connection.dropDatabase()
 async function genAll () {
   const createUser = async (requestBody) => {
     return new Promise(async (resolve, reject) => {
-      const response = await nfetch(`http://localhost:${PORT}/users`, {
+      const response = await nfetch(`http://localhost:${PORT}/api/v1/users`, {
         method: 'POST',
         body: JSON.stringify(requestBody),
         headers: { 'Content-Type': 'application/json' }
       })
       const jsonResponse = await response.json()
-      resolve(jsonResponse)
+      if ('data' in jsonResponse) {
+        resolve(jsonResponse.data)
+      } else {
+        reject(jsonResponse.error)
+      }
     })
   }
 
   const createBook = async (requestBody) => {
     return new Promise(async (resolve, reject) => {
-      const response = await nfetch(`http://localhost:${PORT}/books`, {
+      const response = await nfetch(`http://localhost:${PORT}/api/v1/books`, {
         method: 'POST',
         body: JSON.stringify(requestBody),
         headers: { 'Content-Type': 'application/json' }
       })
       const jsonResponse = await response.json()
-      resolve(jsonResponse)
+      if ('data' in jsonResponse) {
+        resolve(jsonResponse.data)
+      } else {
+        reject(jsonResponse.error)
+      }
     })
   }
 
@@ -118,11 +126,11 @@ async function genAll () {
     release_date: '1859-01-01',
     ratings: [{
       rate: 4,
-      voter: monsieur.data[0]._id
+      voter: monsieur._id
     },
     {
       rate: 5,
-      voter: madame.data[0]._id
+      voter: madame._id
     }]
   })
 }

@@ -31,42 +31,41 @@
 //= =---------------------------------------------------= =//
 //= =--- DESCRIPTION
 //= =---------------------------------------------------= =//
-// This file (api/middlewares/Logger.js)
-// is defining a logger class and a mongo log schema
-// Any call to Logger.log will insert a new log record
-// to the connected mongo database
-// Keep the schema light to reduce the disk space used
+// This file (api/v1/models/User.js)
+// only defines a User schema & Model
+// It also contains the genderEnumeration
 //= =---------------------------------------------------= =//
 
 const mongoose = require('mongoose')
 
 //= =---------------------------------------------------= =//
-// ---== Define MongoDb Log Schema & Model
+// ---== Define the Gender Enumeration
 //= =---------------------------------------------------= =//
-const logSchema = mongoose.Schema({
-  _id: mongoose.Schema.Types.ObjectId,
-  message: String,
-  timestamp: String
+const genderEnumeration = Object.freeze({
+  male: 'male',
+  female: 'female'
 })
-const Log = mongoose.model('Log', logSchema)
 //= =---------------------------------------------------= =//
 
 //= =---------------------------------------------------= =//
-// ---== Logger class
+// ---== Define the UserSchema
 //= =---------------------------------------------------= =//
-class Logger {
-  static log (msg) {
-    try {
-      new Log({
-        _id: mongoose.Types.ObjectId(),
-        message: msg,
-        timestamp: Date.now().toString()
-      }).save()
-    } catch (err) {
-      console.log(err)
-    }
+const userSchema = mongoose.Schema({
+  _id: mongoose.Schema.Types.ObjectId,
+  name: {
+    type: String,
+    required: true
+  },
+  birthdate: {
+    type: Date,
+    required: true
+  },
+  gender: {
+    type: String,
+    enum: Object.values(genderEnumeration),
+    required: true
   }
-}
+})
 //= =---------------------------------------------------= =//
 
-module.exports = Logger
+module.exports = mongoose.model('User', userSchema)

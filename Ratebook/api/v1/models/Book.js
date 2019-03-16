@@ -31,7 +31,7 @@
 //= =---------------------------------------------------= =//
 //= =--- DESCRIPTION
 //= =---------------------------------------------------= =//
-// This file (api/models/Book.js)
+// This file (api/v1/models/Book.js)
 // only defines a Book schema & Model
 // It also contains the bookRating schema
 //= =---------------------------------------------------= =//
@@ -71,7 +71,7 @@ const bookSchema = mongoose.Schema({
     required: true
   },
   release_date: {
-    type: String,
+    type: Date,
     required: true
   },
   ratings: {

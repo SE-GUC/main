@@ -31,8 +31,8 @@
 //= =---------------------------------------------------= =//
 //= =--- DESCRIPTION
 //= =---------------------------------------------------= =//
-// This file (api/routes/books.js)
-// is handling routes starting with `/books`
+// This file (api/v1/routes/books.js)
+// is handling routes starting with `/api/v1/books`
 //= =---------------------------------------------------= =//
 
 const joi = require('joi')
@@ -51,7 +51,7 @@ router
     const status = joi.validate(request.body, {
       title: joi.string().min(2).required(),
       author: joi.string().min(2).required(),
-      release_date: joi.string().length(10).required(),
+      release_date: joi.date().required(),
       ratings: joi.array().items(joi.object().keys({
         rate: joi.number().min(0).max(5).required(),
         voter: joi.string().length(24).required()
@@ -61,24 +61,24 @@ router
       return response.json({ error: status.error.details[0].message })
     }
     try {
-      new Book({
+      const book = await new Book({
         _id: mongoose.Types.ObjectId(),
         title: request.body.title,
         author: request.body.author,
         release_date: request.body.release_date,
         ratings: request.body.ratings || []
       }).save()
-      response.redirect('/books')
+      return response.json({ data: book })
     } catch (err) {
-      response.json({ error: `Error, couldn't create a new book with the following data` })
+      return response.json({ error: `Error, couldn't create a new book with the following data` })
     }
   })
   .get(async (request, response) => {
     try {
       const allBooks = await Book.find({}).exec()
-      response.json({ data: allBooks })
+      return response.json({ data: allBooks })
     } catch (err) {
-      response.json({ error: `Error, Couldn't fetch the list of all books from the database` })
+      return response.json({ error: `Error, Couldn't fetch the list of all books from the database` })
     }
   })
 //= =---------------------------------------------------= =//
@@ -153,8 +153,8 @@ router
         rate: request.body.rate,
         voter: request.body.voter
       }
-      await Book.findByIdAndUpdate(request.params.id, { $push: { ratings: rate } }).exec()
-      return response.redirect(303, `/books/${request.params.id}`)
+      const book = await Book.findByIdAndUpdate(request.params.id, { $push: { ratings: rate } }).exec()
+      return response.json({ data: book })
     } catch (err) {
       return response.json({ error: `Error, couldn't vote for a book given the following data` })
     }
@@ -173,8 +173,8 @@ router
         rate: request.body.rate,
         voter: request.body.voter
       }
-      await Book.findByIdAndUpdate(request.params.id, { $set: { ratings: rate } }).exec()
-      return response.redirect(303, `/books/${request.params.id}`)
+      const book = await Book.findByIdAndUpdate(request.params.id, { $set: { ratings: rate } }).exec()
+      return response.json({ data: book })
     } catch (err) {
       return response.json({ error: `Error, couldn't update a vote for a book given the following data` })
     }

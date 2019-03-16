@@ -41,13 +41,13 @@
 //= =---------------------------------------------------= =//
 
 require('dotenv').config()
-const Logger = require('./api/middlewares/Logger')
+const Logger = require('./api/v1/middlewares/Logger')
 const mongoose = require('mongoose')
 const express = require('express')
 const app = express()
 
-const users = require('./api/routes/users')
-const books = require('./api/routes/books')
+const users = require('./api/v1/routes/users')
+const books = require('./api/v1/routes/books')
 
 //= =---------------------------------------------------= =//
 //= =--- CAPTURE ENVIRONMENT VARIABLES
@@ -69,14 +69,23 @@ app.use(express.json())
 //= =---------------------------------------------------= =//
 
 //= =---------------------------------------------------= =//
+// ---== LOGGER MIDDLEWARE
+//= =---------------------------------------------------= =//
+app.use((request, response, next) => {
+  Logger.log(`${request.method} => ${request.originalUrl}`)
+  next()
+})
+//= =---------------------------------------------------= =//
+
+//= =---------------------------------------------------= =//
 // ---== HANDLE Homepage
 //= =---------------------------------------------------= =//
 app.get('/favicon.ico', (req, res) => res.status(204))
 app.get('/', (request, response) => {
   response.send(`
   Welcome To Ratebook !<br>
-  <a href="/users">Users</a><br>
-  <a href="/books">Books</a>
+  <a href="/api/v1/users">Users</a><br>
+  <a href="/api/v1/books">Books</a>
   `)
 })
 //= =---------------------------------------------------= =//
@@ -84,16 +93,8 @@ app.get('/', (request, response) => {
 //= =---------------------------------------------------= =//
 // ---== HANDLE SubRoutes
 //= =---------------------------------------------------= =//
-app.use('/users', users)
-app.use('/books', books)
-//= =---------------------------------------------------= =//
-
-//= =---------------------------------------------------= =//
-// ---== LOGGER MIDDLEWARE
-//= =---------------------------------------------------= =//
-app.use((request, response, next) => {
-  Logger.log(`${request.method} => ${request.originalUrl}}`)
-})
+app.use('/api/v1/users', users)
+app.use('/api/v1/books', books)
 //= =---------------------------------------------------= =//
 
 //= =---------------------------------------------------= =//

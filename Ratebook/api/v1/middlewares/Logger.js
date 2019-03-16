@@ -31,41 +31,42 @@
 //= =---------------------------------------------------= =//
 //= =--- DESCRIPTION
 //= =---------------------------------------------------= =//
-// This file (api/models/User.js)
-// only defines a User schema & Model
-// It also contains the genderEnumeration
+// This file (api/v1/middlewares/Logger.js)
+// is defining a logger class and a mongo log schema
+// Any call to Logger.log will insert a new log record
+// to the connected mongo database
+// Keep the schema light to reduce the disk space used
 //= =---------------------------------------------------= =//
 
 const mongoose = require('mongoose')
 
 //= =---------------------------------------------------= =//
-// ---== Define the Gender Enumeration
+// ---== Define MongoDb Log Schema & Model
 //= =---------------------------------------------------= =//
-const genderEnumeration = Object.freeze({
-  male: 'male',
-  female: 'female'
-})
-//= =---------------------------------------------------= =//
-
-//= =---------------------------------------------------= =//
-// ---== Define the UserSchema
-//= =---------------------------------------------------= =//
-const userSchema = mongoose.Schema({
+const logSchema = mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
-  name: {
-    type: String,
-    required: true
-  },
-  birthdate: {
-    type: String,
-    required: true
-  },
-  gender: {
-    type: String,
-    enum: Object.values(genderEnumeration),
-    required: true
-  }
+  message: String,
+  timestamp: Date
 })
+const Log = mongoose.model('Log', logSchema)
 //= =---------------------------------------------------= =//
 
-module.exports = mongoose.model('User', userSchema)
+//= =---------------------------------------------------= =//
+// ---== Logger class
+//= =---------------------------------------------------= =//
+class Logger {
+  static log (msg) {
+    try {
+      new Log({
+        _id: mongoose.Types.ObjectId(),
+        message: msg,
+        timestamp: Date.now().toString()
+      }).save()
+    } catch (err) {
+      console.log(err)
+    }
+  }
+}
+//= =---------------------------------------------------= =//
+
+module.exports = Logger

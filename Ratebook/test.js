@@ -41,8 +41,8 @@
 require('dotenv').config()
 const mongoose = require('mongoose')
 
-const UsersTest = require('./api/tests/users')
-const BooksTest = require('./api/tests/books')
+const UsersTest = require('./api/v1/tests/users')
+const BooksTest = require('./api/v1/tests/books')
 
 //= =---------------------------------------------------= =//
 //= =--- CAPTURE ENVIRONMENT VARIABLES
@@ -68,16 +68,32 @@ mongoose.connect(`${MONGO_DNS_SRV}${MONGO_AUTH}${MONGO_CLUSTER}${MONGO_DB_NAME}$
 //= =---------------------------------------------------= =//
 // ---== Setup before & after all tests run
 //= =---------------------------------------------------= =//
-beforeAll(() => {})
+beforeAll(async () => {
+  await mongoose.connection.dropDatabase()
+})
 
-afterAll(() => {
-  mongoose.connection.dropDatabase()
+afterAll(async () => {
+  await mongoose.connection.dropDatabase()
 })
 //= =---------------------------------------------------= =//
 
 //= =---------------------------------------------------= =//
 // ---== Core tests
 //= =---------------------------------------------------= =//
-new UsersTest(PORT).runAll().then(_ => {})
-new BooksTest(PORT).runAll().then(_ => {})
+const usersTests = new UsersTest(PORT, '/users')
+const booksTests = new BooksTest(PORT, '/books')
+
+describe('Let me first run the independent tests', () => {
+  Promise.all([
+    usersTests.runIndependently(),
+    booksTests.runIndependently()
+  ]).then(result => {
+    describe('Now running the dependent tests', () => {
+      Promise.all([
+        usersTests.runDependently().then(_ => {}),
+        booksTests.runDependently().then(_ => {})
+      ]).then(result => {})
+    })
+  })
+})
 //= =---------------------------------------------------= =//

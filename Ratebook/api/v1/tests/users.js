@@ -31,17 +31,43 @@
 //= =---------------------------------------------------= =//
 //= =--- DESCRIPTION
 //= =---------------------------------------------------= =//
-// This file (api/tests/users.js)
+// This file (api/v1/tests/users.js)
 // tests the (post, get, put and delete) requests
-// starting from `/users`
+// starting from `/api/v1/users`
 //
-// It defines a class UsersTest
-// Its constructor takes 1 argument, the server port
+// It defines a class UsersTest, inherits from AbstractTests
+// Its constructor takes 2 arguments,
+// the server port and the route on which to test
+//
+// This class has 2 categories of functions
+// 1- Independent
+// 2- Dependent
+//
+// Mainly the tests which do not have any need for external
+// entities it should be tested in the independent section
+//
+// Some tests would depend on external entities
+// that's why we have dependent functions
+//
+// When testing we first run the independent tests on
+// all entities, then if they all pass, we start
+// testing all dependent tests of all the entities
 //
 // Usage:
-//  new UsersTest(3000).runAll().then(result => ...)
+//  ...
+//  new UsersTest(3000).runIndependently().then(result => ...)
+//  ...
 //
-// runAll():
+// Once all entites independet tests pass start running
+// new UsersTest(3000).runDependently().then(result => ...)
+//
+// A bit complicated, don't you get attached to the details ..
+//
+// The next functions have 2 kinds suffixes
+// 1- <function_name>Independently
+// 2- <function_name>Dependently
+//
+// run():
 // returns a promise, so in case you need it
 // to finish, just make sure you wait for it to resolve
 // by using .then(result => ...)
@@ -49,63 +75,77 @@
 //
 // postRequest():
 // is responsible for testing all the post requests of all
-// the routes starting from `/users`
+// the routes starting from `/api/v1/users`
 //
 // getRequest():
 // is responsible for testing all the get requests of all
-// the routes starting from `/users`
+// the routes starting from `/api/v1/users`
 //
 // putRequest():
 // is responsible for testing all the put requests of all
-// the routes starting from `/users`
+// the routes starting from `/api/v1/users`
 //
 // deleteRequest():
 // is responsible for testing all the delete requests of all
-// the routes starting from `/users`
+// the routes starting from `/api/v1/users`
 //= =---------------------------------------------------= =//
 
 const nfetch = require('node-fetch')
+const AbstractTests = require('./AbstractTests')
 const User = require('../models/User')
 
 //= =---------------------------------------------------= =//
 //= =--- UsersTest class
 //= =---------------------------------------------------= =//
-class UsersTest {
-  constructor (PORT) {
-    this.base_url = `http://localhost:${PORT}/users`
+class UsersTest extends AbstractTests {
+  constructor (PORT, ROUTE) {
+    super(PORT, ROUTE)
     this.sharedState = {
       id: null,
       name: null,
       birthdate: null,
       gender: null
     }
-    this.runAll = this.runAll.bind(this)
-    this.postRequest = this.postRequest.bind(this)
-    this.getRequest = this.getRequest.bind(this)
-    this.putRequest = this.putRequest.bind(this)
-    this.deleteRequest = this.deleteRequest.bind(this)
   }
 
-  runAll () {
+  runIndependently () {
+    super.runIndependently()
     try {
       return new Promise((resolve, reject) => {
-        this.postRequest()
-        this.getRequest()
-        this.putRequest()
-        this.deleteRequest()
+        describe('Making sure independent users routes work', () => {
+          this.postRequestIndependently()
+          this.getRequestIndependently()
+          this.putRequestIndependently()
+          this.deleteRequestIndependently()
+        })
         resolve()
       })
     } catch (err) {}
   }
 
-  postRequest () {
+  runDependently () {
+    super.runDependently()
+    try {
+      return new Promise((resolve, reject) => {
+        describe('Making sure dependent users routes work', () => {
+          this.postRequestDependently()
+          this.getRequestDependently()
+          this.putRequestDependently()
+          this.deleteRequestDependently()
+        })
+        resolve()
+      })
+    } catch (err) {}
+  }
+
+  postRequestIndependently () {
     const requestBody = {
       name: 'monsieur automation robot',
-      birthdate: '1999-01-31',
+      birthdate: new Date(1999, 1, 31),
       gender: 'male'
     }
 
-    test(`Testing => POST ${this.base_url}`, async () => {
+    test(`Randomly creating a new user,\t\t[=> POST\t${this.base_url}\t`, async () => {
       const response = await nfetch(`${this.base_url}`, {
         method: 'POST',
         body: JSON.stringify(requestBody),
@@ -127,8 +167,8 @@ class UsersTest {
     })
   }
 
-  getRequest () {
-    test(`Testing => GET ${this.base_url}/:id`, async () => {
+  getRequestIndependently () {
+    test(`Fetching the data of that random user,\t[=> GET\t\t${this.base_url}/:id\t`, async () => {
       const response = await nfetch(`${this.base_url}/${this.sharedState.id}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
@@ -139,18 +179,18 @@ class UsersTest {
       expect(Object.keys(jsonResponse)).not.toEqual(['error'])
 
       expect(jsonResponse.data.name).toEqual(this.sharedState.name)
-      expect(jsonResponse.data.birthdate).toEqual(this.sharedState.birthdate)
+      expect(new Date(jsonResponse.data.birthdate)).toEqual(this.sharedState.birthdate)
       expect(jsonResponse.data.gender).toEqual(this.sharedState.gender)
     })
   }
 
-  putRequest () {
+  putRequestIndependently () {
     const requestBody = {
       name: 'madame automation robote',
-      birthdate: '1999-01-31',
+      birthdate: new Date(1999, 1, 31),
       gender: 'female'
     }
-    test(`Testing => PUT ${this.base_url}/:id`, async () => {
+    test(`Updating the data of that user,\t\t[=> PUT\t\t${this.base_url}/:id\t`, async () => {
       const response = await nfetch(`${this.base_url}/${this.sharedState.id}`, {
         method: 'PUT',
         body: JSON.stringify(requestBody),
@@ -163,7 +203,7 @@ class UsersTest {
 
       const user = await User.findOne(requestBody).exec()
       expect(jsonResponse.data.name).toEqual(user.name)
-      expect(jsonResponse.data.birthdate).toEqual(user.birthdate)
+      expect(new Date(jsonResponse.data.birthdate)).toEqual(user.birthdate)
       expect(jsonResponse.data.gender).toEqual(user.gender)
       this.sharedState.id = user.id
       this.sharedState.name = user.name
@@ -172,8 +212,8 @@ class UsersTest {
     })
   }
 
-  deleteRequest () {
-    test(`Testing => DELETE ${this.base_url}/:id`, async () => {
+  deleteRequestIndependently () {
+    test(`Deleting that random user,\t\t\t[=> DELETE\t${this.base_url}/:id\t`, async () => {
       const response = await nfetch(`${this.base_url}/${this.sharedState.id}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' }
@@ -187,6 +227,22 @@ class UsersTest {
       const checkUser = await User.findOne({ _id: this.sharedState.id }).exec()
       expect(checkUser).toEqual(null)
     })
+  }
+
+  postRequestDependently () {
+
+  }
+
+  getRequestDependently () {
+
+  }
+
+  putRequestDependently () {
+
+  }
+
+  deleteRequestDependently () {
+
   }
 }
 //= =---------------------------------------------------= =//
