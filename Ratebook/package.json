@@ -1,0 +1,30 @@
+{
+  "name": "Ratebook",
+  "version": "1.0.0",
+  "description": "a simple book rating app",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "concurrently \"node index.js\" \"jest --detectOpenHandles test.js\"",
+    "gen": "concurrently \"node index.js\" \"node generate.js\"",
+    "parser": "node parser/parser.js"
+  },
+  "keywords": [],
+  "author": "osheriff",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^6.2.0",
+    "express": "^4.16.4",
+    "joi": "^14.3.1",
+    "joi-generate": "^0.2.0",
+    "mongoose": "^5.4.19",
+    "node-fetch": "^2.3.0",
+    "opn": "^5.4.0"
+  },
+  "devDependencies": {
+    "concurrently": "^4.1.0",
+    "jest": "^24.4.0",
+    "nodemon": "^1.18.10"
+  }
+}

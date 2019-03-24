@@ -1,0 +1,244 @@
+{
+    "routes": [
+        {
+            "url": "/api/v1/users",
+            "params": {},
+            "methods": {
+                "POST": {
+                    "summary": "create a new user",
+                    "body": {
+                        "!name": "string().min(2)",
+                        "!birthdate": "string().length(10)",
+                        "!gender": "string().valid(['male', 'female'])"
+                    },
+                    "expected": {
+                        "data": {
+                            "!_id": "string().length(24)",
+                            "!name": "string().min(2)",
+                            "!birthdate": "string().length(10)",
+                            "!gender": "string().valid(['male', 'female'])"
+                        }
+                    }
+                },
+                "GET": {
+                    "summary": "get list of all users",
+                    "expected": {
+                        "data": [
+                            {
+                                "!_id": "string().length(24)",
+                                "!name": "string().min(2)",
+                                "!birthdate": "string().length(10)",
+                                "!gender": "string().valid(['male', 'female'])"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "url": "/api/v1/users/:id",
+            "params": {
+                "!id": "string().length(24)"
+            },
+            "methods": {
+                "GET": {
+                    "summary": "get a single user info",
+                    "expected": {
+                        "data": {
+                            "!_id": "string().length(24)",
+                            "!name": "string().min(2)",
+                            "!birthdate": "string().length(10)",
+                            "!gender": "string().valid(['male', 'female'])"
+                        }
+                    }
+                },
+                "PUT": {
+                    "summary": "update a single user info",
+                    "body": {
+                        "name": "string().min(2)",
+                        "birthdate": "string().length(10)",
+                        "gender": "string().valid(['male', 'female'])"
+                    },
+                    "expected": {
+                        "data": {
+                            "!_id": "string().length(24)",
+                            "!name": "string().min(2)",
+                            "!birthdate": "string().length(10)",
+                            "!gender": "string().valid(['male', 'female'])"
+                        }
+                    }
+                },
+                "DELETE": {
+                    "summary": "delete a single user info",
+                    "body": {},
+                    "expected": {
+                        "data": null
+                    }
+                }
+            }
+        },
+        {
+            "url": "/api/v1/books",
+            "params": {},
+            "methods": {
+                "POST": {
+                    "summary": "create a new book",
+                    "body": {
+                        "!title": "string().min(2)",
+                        "!author": "string().min(2)",
+                        "!release_date": "string().length(10)",
+                        "ratings": [
+                            {
+                                "!rate": "number().min(0).max(5)",
+                                "!voter": "string().length(24)"
+                            }
+                        ]
+                    },
+                    "expected": {
+                        "data": {
+                            "!_id": "string().length(24)",
+                            "!title": "string().min(2)",
+                            "!author": "string().min(2)",
+                            "!release_date": "string().length(10)",
+                            "!ratings": [
+                                {
+                                    "!rate": "number().min(0).max(5)",
+                                    "!voter": "string().length(24)"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "GET": {
+                    "summary": "get list of all books",
+                    "expected": {
+                        "data": [
+                            {
+                                "!_id": "string().length(24)",
+                                "!title": "string().min(2)",
+                                "!author": "string().min(2)",
+                                "!release_date": "string().length(10)",
+                                "!ratings": [
+                                    {
+                                        "!rate": "number().min(0).max(5)",
+                                        "!voter": "string().length(24)"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "url": "/api/v1/books/:id",
+            "params": {
+                "!id": "string().length(24)"
+            },
+            "methods": {
+                "GET": {
+                    "summary": "get a single book info",
+                    "expected": {
+                        "data": {
+                            "!_id": "string().length(24)",
+                            "!title": "string().min(2)",
+                            "!author": "string().min(2)",
+                            "!release_date": "string().length(10)",
+                            "!ratings": [
+                                {
+                                    "!rate": "number().min(0).max(5)",
+                                    "!voter": "string().length(24)"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "PUT": {
+                    "summary": "update a single book info",
+                    "body": {
+                        "title": "string().min(2)",
+                        "author": "string().min(2)",
+                        "release_date": "string().length(10)",
+                        "ratings": [
+                            {
+                                "!rate": "number().min(0).max(5)",
+                                "!voter": "string().length(24)"
+                            }
+                        ]
+                    },
+                    "expected": {
+                        "data": {
+                            "!_id": "string().length(24)",
+                            "!title": "string().min(2)",
+                            "!author": "string().min(2)",
+                            "!release_date": "string().length(10)",
+                            "!ratings": [
+                                {
+                                    "!rate": "number().min(0).max(5)",
+                                    "!voter": "string().length(24)"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "DELETE": {
+                    "summary": "delete a single book info",
+                    "body": {},
+                    "expected": {
+                        "data": null
+                    }
+                }
+            }
+        },
+        {
+            "url": "/api/v1/books/:id/vote",
+            "params": {
+                "!id": "string().length(24)"
+            },
+            "methods": {
+                "POST": {
+                    "summary": "create a new vote",
+                    "body": {
+                        "!rate": "number().min(0).max(5)",
+                        "!voter": "string().length(24)"
+                    },
+                    "expected": {
+                        "data": {
+                            "!_id": "string().length(24)",
+                            "!title": "string().min(2)",
+                            "!author": "string().min(2)",
+                            "!release_date": "string().length(10)",
+                            "!ratings": [
+                                {
+                                    "!rate": "number().min(0).max(5)",
+                                    "!voter": "string().length(24)"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "PUT": {
+                    "summary": "update a vote info",
+                    "body": {
+                        "!rate": "number().min(0).max(5)",
+                        "!voter": "string().length(24)"
+                    },
+                    "expected": {
+                        "data": {
+                            "!_id": "string().length(24)",
+                            "!title": "string().min(2)",
+                            "!author": "string().min(2)",
+                            "!release_date": "string().length(10)",
+                            "!ratings": [
+                                {
+                                    "!rate": "number().min(0).max(5)",
+                                    "!voter": "string().length(24)"
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}
